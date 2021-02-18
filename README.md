@@ -16,6 +16,10 @@ Docker for Hyperf
 
 ```shell
 # clone project
+git clone git@github.com:danielhuang-030/docker-hyperf.git
+
+# clone hyperf project
+cd docker-hyperf
 git clone git@github.com:danielhuang-030/hyperf-test.git hyperf
 
 # composer install

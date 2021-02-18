@@ -24,7 +24,7 @@ ENV SW_VERSION=${SW_VERSION:-"v4.5.7"} \
 RUN set -ex \
     && apk update \
     # for swoole extension libaio linux-headers
-    && apk add --no-cache libstdc++ openssl git bash \
+    && apk add --no-cache libstdc++ openssl git bash vim supervisor \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libaio-dev openssl-dev curl-dev \
     # download
     && cd /tmp \
@@ -60,3 +60,8 @@ RUN set -ex \
     && echo -e "\033[42;37m Build Completed :).\033[0m\n"
 	
 WORKDIR /app
+
+#COPY ./dockerize/conf/cron/root /etc/crontabs/root
+COPY ./dockerize/conf/supervisord/supervisord.conf /etc/supervisord.conf
+
+ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]

@@ -86,16 +86,20 @@ services:
         build:
             context: .
             dockerfile: ./dockerize/dockerfile/hyperf.dockerfile
-        image: danielhuang030/hyperf:0.0.1
+            args:
+                SW_VERSION: v4.5.11
+                COMPOSER_VERSION: 2.0.9
+        image: danielhuang030/hyperf:0.0.2
         container_name: hyperf
         restart: always
-        #command: ["php", "/app/bin/hyperf.php", "start"]
-        command: ["php", "watch.php"]
         ports:
           - "40000:9501"
           - "40001:9502"
         volumes:
           - "./hyperf:/app"
+          - "./dockerize/conf/supervisord/supervisord.conf:/etc/supervisord.conf"
+          - "./dockerize/log/hyperf/out.log:/var/log/hyperf-out.log"
+          - "./dockerize/conf/php/php.ini:/etc/php7/conf.d/php-custom.ini"
         networks:
             - hyperf-network
         depends_on:

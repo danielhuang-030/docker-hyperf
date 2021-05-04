@@ -12,6 +12,9 @@ LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MI
 ARG SW_VERSION
 ARG COMPOSER_VERSION
 
+ADD https://packages.whatwedo.ch/php-alpine.rsa.pub /etc/apk/keys/php-alpine.rsa.pub
+RUN echo "https://packages.whatwedo.ch/php-alpine/v3.12/php-7.4" >> /etc/apk/repositories
+
 ##
 # ---------- env settings ----------
 ##
@@ -22,7 +25,7 @@ ENV SW_VERSION=${SW_VERSION:-"v4.5.7"} \
 
 # update
 RUN set -ex \
-    && apk update \
+    && apk update --no-cache \
     # for swoole extension libaio linux-headers
     && apk add --no-cache libstdc++ openssl git bash vim supervisor \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS libaio-dev openssl-dev curl-dev \

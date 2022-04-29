@@ -9,14 +9,14 @@ services:
 #hyperf-db
     hyperf-db:
         image: mysql:5.7
-        container_name: hyperf-db
+        container_name: ${DB_HOST:-hyperf-db}
         restart: always
         ports:
-            - "40006:3306"
+            - "${DB_PORT:-40006}:3306"
         environment:
-            MYSQL_DATABASE: hyperf
-            MYSQL_ROOT_PASSWORD: root
-            TZ: Asia/Taipei
+            MYSQL_DATABASE: ${DB_DATABASE:-hyperf}
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+            TZ: ${TZ:-Asia/Taipei}
         command: [
             "--character-set-server=utf8mb4",
             "--collation-server=utf8mb4_unicode_ci",
@@ -33,14 +33,14 @@ services:
 #hyperf-redis
     hyperf-redis:
         image: redis:latest
-        container_name: hyperf-redis
+        container_name: ${REDIS_HOST:-hyperf-redis}
         restart: always
         volumes:
             - ./dockerize/data/redis:/data
         ports:
-            - "40009:6379"
+            - "${REDIS_PORT:-40009}:6379"
         environment:
-            - TZ=Asia/Taipei
+            - TZ=${TZ:-Asia/Taipei}
             - LANG=en_US.UTF-8
         logging:
           driver: "json-file"
@@ -57,14 +57,14 @@ services:
         volumes:
             - ./dockerize/conf/phpMyAdmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
         ports:
-            - "40010:80"
+            - "${PMA_PORT:-40010}:80"
         environment:
-            SESSION_TIMEOUT: 86400
-            PMA_HOST: hyperf-db
+            SESSION_TIMEOUT: ${PMA_SESSION_TIMEOUT:-86400}
+            PMA_HOST: ${DB_HOST:-hyperf-db}
         networks:
             - hyperf-network
         depends_on:
-            - hyperf-db
+            - ${DB_HOST:-hyperf-db}
 
 #phpRedisAdmin
     pra:
@@ -72,7 +72,7 @@ services:
         container_name: hyperf-pra
         restart: always
         ports:
-            - "40011:80"
+            - "${PRA_PORT:-40011}:80"
         environment:
             REDIS_1_HOST: hyperf-redis
             REDIS_1_NAME: hyperf-redis
@@ -81,27 +81,27 @@ services:
         depends_on:
             - hyperf-redis
 
-#hyperf
-    hyperf:
+#hyperf-app
+    hyperf-app:
         build:
             context: .
             dockerfile: ./dockerize/dockerfile/hyperf.dockerfile
             args:
-                SW_VERSION: v4.5.11
-                COMPOSER_VERSION: 2.0.9
-        image: danielhuang030/hyperf:0.0.2
-        container_name: hyperf
+                SW_VERSION: ${SW_VERSION:-v4.5.7}
+                COMPOSER_VERSION: ${COMPOSER_VERSION:-2.0.2}
+        image: danielhuang030/hyperf:0.0.3
+        container_name: ${APP:-hyperf-app}
         restart: always
         ports:
-          - "40000:9501"
-          - "40001:9502"
+          - "${SWOOLE_WEB_PORT:-40000}:9501"
+          - "${SWOOLE_WEBSOCKET_PORT:-40001}:9502"
         volumes:
-          - "./hyperf:/app"
+          - "./app:/app"
           - "./dockerize/conf/supervisord/supervisord.conf:/etc/supervisord.conf"
           - "./dockerize/log/hyperf/out.log:/var/log/hyperf-out.log"
           - "./dockerize/conf/php/php.ini:/etc/php7/conf.d/php-custom.ini"
         networks:
             - hyperf-network
         depends_on:
-            - hyperf-db
-            - hyperf-redis
+            - ${DB_HOST:-hyperf-db}
+            - ${REDIS_HOST:-hyperf-redis}

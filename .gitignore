@@ -1,3 +1,5 @@
-hyperf/
+app/
+dockerize/log/
+.env
 
 *.code-workspace

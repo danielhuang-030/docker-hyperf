@@ -21,9 +21,6 @@ git clone git@github.com:danielhuang-030/docker-hyperf.git
 cd docker-hyperf
 git clone git@github.com:danielhuang-030/twitter-test-hyperf.git app
 
-# exit folder
-cd ..
-
 # start docker
 docker-compose up -d
 

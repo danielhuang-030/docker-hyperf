@@ -2,10 +2,12 @@
 docker hyperf
 
 ### Introduction
-Docker for Hyperf
+Docker for Hyperf.
+Use `hyperf-watch` to replace the original `bin/hyperf.php start`. [Check here](https://github.com/danielhuang-030/docker-hyperf/blob/main/dockerize/conf/supervisord/supervisord.conf#L11)
 
 ### Including
  - [Hyperf](https://hub.docker.com/r/hyperf/hyperf)
+ - [ha-ni-cc/hyperf-watch](https://github.com/ha-ni-cc/hyperf-watch)
  - [MySQL 5.7](https://hub.docker.com/_/mysql)
  - [Redis](https://hub.docker.com/_/redis)
  - [phpMyAdmin](https://hub.docker.com/r/phpmyadmin/phpmyadmin)

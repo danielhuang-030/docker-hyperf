@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 networks:
     hyperf-network:
@@ -55,7 +55,9 @@ services:
         container_name: hyperf-pma
         restart: always
         volumes:
-            - ./dockerize/conf/phpMyAdmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+            - type: bind
+              source: ./dockerize/conf/phpMyAdmin/config.user.inc.php
+              target: /etc/phpmyadmin/config.user.inc.php
         ports:
             - "${PMA_PORT:-40010}:80"
         environment:
@@ -96,10 +98,14 @@ services:
           - "${SWOOLE_WEB_PORT:-40000}:9501"
           - "${SWOOLE_WEBSOCKET_PORT:-40001}:9502"
         volumes:
-          - "./app:/app"
-          - "./dockerize/conf/supervisord/supervisord.conf:/etc/supervisord.conf"
-          - "./dockerize/log/hyperf/out.log:/var/log/hyperf-out.log"
-          - "./dockerize/conf/php/php.ini:/etc/php7/conf.d/php-custom.ini"
+          - ./app:/app
+          - ./dockerize/log/hyperf:/var/log
+          - type: bind
+            source: ./dockerize/conf/supervisord/supervisord.conf
+            target: /etc/supervisord.conf
+          - type: bind
+            source: ./dockerize/conf/php/php.ini
+            target: /etc/php7/conf.d/php-custom.ini
         networks:
             - hyperf-network
         depends_on:
